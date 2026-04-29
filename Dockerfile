@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpq-dev \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Install Composer
@@ -17,13 +19,16 @@ WORKDIR /app
 # Copy files
 COPY . .
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# 🔥 Install frontend dependencies + build assets
+RUN npm install && npm run build
 
 # Expose port
 EXPOSE 10000
 
-# ✅ Only run Laravel commands at runtime (when ENV exists)
+# Start app
 CMD php artisan config:clear \
     && php artisan cache:clear \
     && php artisan migrate --force || true \
