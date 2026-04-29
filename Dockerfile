@@ -20,12 +20,11 @@ COPY . .
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches
-RUN php artisan config:clear && php artisan cache:clear
-
 # Expose port
 EXPOSE 10000
 
-# ✅ SAFE startup (will not crash container)
-CMD php artisan migrate --force || true \
+# ✅ Only run Laravel commands at runtime (when ENV exists)
+CMD php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan migrate --force || true \
     && php -S 0.0.0.0:$PORT -t public
