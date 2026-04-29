@@ -17,17 +17,16 @@ WORKDIR /app
 # Copy files
 COPY . .
 
-# Install PHP dependencies
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches
-RUN php artisan config:clear && php artisan cache:clear
+# 🔥 IMPORTANT: DO NOT CACHE CONFIG HERE
 
 # Expose port
 EXPOSE 10000
 
-# Start Laravel (🔥 FINAL FIX)
-CMD php artisan key:generate --force \
+# 🔥 FINAL FIX: force fresh config + run app
+CMD rm -f bootstrap/cache/config.php \
     && php artisan config:clear \
     && php artisan cache:clear \
     && php artisan migrate --force \
