@@ -22,7 +22,7 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# 🔥 Ensure fresh frontend build
+# 🔥 Fresh frontend build
 RUN rm -rf node_modules package-lock.json
 RUN npm install
 RUN npm run build
@@ -30,11 +30,13 @@ RUN npm run build
 # Expose port
 EXPOSE 10000
 
-# 🔥 Stable runtime startup
+# 🔥 FINAL runtime (fixes your login issue)
 CMD rm -f bootstrap/cache/config.php \
     && php artisan config:clear \
     && php artisan cache:clear \
+    && php artisan config:cache \
     && php artisan view:clear \
     && php artisan route:clear \
-    && php artisan migrate --force || true \
+    && php artisan migrate --force \
+    && php artisan db:seed --force || true \
     && php -S 0.0.0.0:$PORT -t public
