@@ -1,6 +1,6 @@
 FROM php:8.3-cli
 
-# Install system dependencies
+# Install system + Node dependencies
 RUN apt-get update && apt-get install -y \
     unzip \
     git \
@@ -16,20 +16,25 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy files
+# Copy project files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# 🔥 Install frontend dependencies + build assets
-RUN npm install && npm run build
+# 🔥 Ensure fresh frontend build
+RUN rm -rf node_modules package-lock.json
+RUN npm install
+RUN npm run build
 
 # Expose port
 EXPOSE 10000
 
-# Start app
-CMD php artisan config:clear \
+# 🔥 Stable runtime startup
+CMD rm -f bootstrap/cache/config.php \
+    && php artisan config:clear \
     && php artisan cache:clear \
+    && php artisan view:clear \
+    && php artisan route:clear \
     && php artisan migrate --force || true \
     && php -S 0.0.0.0:$PORT -t public
