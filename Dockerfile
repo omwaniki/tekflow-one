@@ -20,14 +20,12 @@ COPY . .
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# 🔥 IMPORTANT: DO NOT CACHE CONFIG HERE
+# Clear Laravel caches
+RUN php artisan config:clear && php artisan cache:clear
 
 # Expose port
 EXPOSE 10000
 
-# 🔥 FINAL FIX: force fresh config + run app
-CMD rm -f bootstrap/cache/config.php \
-    && php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan migrate --force \
+# ✅ SAFE startup (will not crash container)
+CMD php artisan migrate --force || true \
     && php -S 0.0.0.0:$PORT -t public
