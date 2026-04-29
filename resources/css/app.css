@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===============================
+   SIDEBAR COMPONENTS
+================================ */
+@layer components {
+    .sidebar-item {
+        @apply flex items-center gap-4 px-5 py-3 text-gray-200 transition-colors duration-200;
+    }
+
+    .sidebar-item:hover {
+        @apply bg-gray-800 text-white;
+    }
+
+    .sidebar-icon {
+        @apply w-5 text-center text-lg flex-shrink-0;
+    }
+}
+
+/* ===============================
+   THEME VARIABLES (GLOBAL)
+================================ */
+:root {
+    --color-primary: #0f172a;
+    --color-primary-light: #1e293b;
+    --color-primary-dark: #020617;
+}
+
+/* ===============================
+   THEME UTILITIES (DYNAMIC)
+================================ */
+@layer components {
+    .bg-primary {
+        background-color: var(--color-primary);
+    }
+
+    .bg-primary-light {
+        background-color: var(--color-primary-light);
+    }
+
+    .text-primary {
+        color: var(--color-primary);
+    }
+
+    .border-primary {
+        border-color: var(--color-primary);
+    }
+
+    .btn-primary {
+        background-color: var(--color-primary);
+        color: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--color-primary-dark);
+    }
+}
+
+/* ===============================
+   SIDEBAR COLLAPSE
+================================ */
+#sidebar.collapsed {
+    width: 70px;
+}
+
+#sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+#sidebar.collapsed .sidebar-item {
+    justify-content: center;
+}
