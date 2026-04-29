@@ -17,14 +17,18 @@ WORKDIR /app
 # Copy files
 COPY . .
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear cache + run migrations (🔥 FIX)
+# Clear Laravel caches
 RUN php artisan config:clear && php artisan cache:clear
 
 # Expose port
 EXPOSE 10000
 
-# Start app (🔥 FIX: run migrate at startup)
-CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
+# Start Laravel (🔥 FINAL FIX)
+CMD php artisan key:generate --force \
+    && php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan migrate --force \
+    && php -S 0.0.0.0:$PORT -t public
